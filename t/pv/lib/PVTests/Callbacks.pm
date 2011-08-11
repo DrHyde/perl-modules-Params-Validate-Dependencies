@@ -3,7 +3,7 @@ package PVTests::Callbacks;
 use strict;
 use warnings;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 use PVTests;
 use Test::More;
@@ -55,7 +55,7 @@ sub run_tests {
 
 package Foo;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 my %storage = map { lc $_ => $_ } (qw( InMemory XML BerkeleyDB ));
 

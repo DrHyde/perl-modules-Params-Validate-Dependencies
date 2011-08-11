@@ -7,7 +7,7 @@ use lib File::Spec->catdir( 't', 'lib' );
 use PVTests;
 use Test::More;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 validation_options( stack_skip => 2 );
 

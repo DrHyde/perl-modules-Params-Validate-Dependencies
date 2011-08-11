@@ -3,7 +3,7 @@ package PVTests::With;
 use strict;
 use warnings;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 use PVTests;
 use Test::More;
@@ -77,7 +77,7 @@ sub run_tests {
     {
 
         package Testing::X;
-        use Params::Validate qw(:all);
+        use Params::Validate::Dependencies qw(:all);
         validation_options( allow_extra => 1 );
 
         eval {

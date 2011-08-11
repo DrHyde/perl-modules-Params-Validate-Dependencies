@@ -13,7 +13,7 @@ BEGIN {
 
 use Devel::Peek qw( SvREFCNT );
 use File::Temp qw( tempfile );
-use Params::Validate qw( validate SCALAR HANDLE );
+use Params::Validate::Dependencies qw( validate SCALAR HANDLE );
 
 {
     my $fh = tempfile();

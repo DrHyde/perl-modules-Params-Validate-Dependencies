@@ -3,7 +3,7 @@ package PVTests::Defaults;
 use strict;
 use warnings;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 use PVTests;
 use Test::More;

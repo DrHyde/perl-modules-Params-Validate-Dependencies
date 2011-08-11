@@ -3,7 +3,7 @@ use warnings;
 
 use lib './t';
 
-use Params::Validate qw(validate);
+use Params::Validate::Dependencies qw(validate);
 
 use Test::More;
 plan tests => $] == 5.006 ? 2 : 3;

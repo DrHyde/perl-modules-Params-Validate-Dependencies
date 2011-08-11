@@ -3,7 +3,7 @@ package PVTests::Standard;
 use strict;
 use warnings;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 use PVTests;
 use Test::More;
@@ -923,7 +923,7 @@ sub sub26 {
 
 package Foo;
 
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 sub fooify {1}
 

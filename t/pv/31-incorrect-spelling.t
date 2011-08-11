@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More;
 
-use Params::Validate qw( validate validate_pos SCALAR );
+use Params::Validate::Dependencies qw( validate validate_pos SCALAR );
 
 plan skip_all => 'Spec validation is disabled for now';
 

@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-use Params::Validate qw( validate SCALAR );
+use Params::Validate::Dependencies qw( validate SCALAR );
 
 {
     my $p = { foo => 1 };

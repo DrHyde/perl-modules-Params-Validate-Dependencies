@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Params::Validate qw(validate validate_with);
+use Params::Validate::Dependencies qw(validate validate_with);
 use Test::More;
 
 my $ucfirst_normalizer = sub { return ucfirst lc $_[0] };

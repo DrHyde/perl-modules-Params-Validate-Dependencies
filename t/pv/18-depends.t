@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Params::Validate qw(validate validate_pos);
+use Params::Validate::Dependencies qw(validate validate_pos);
 use Test::More;
 
 {

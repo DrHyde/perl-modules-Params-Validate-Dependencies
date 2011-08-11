@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-use Params::Validate qw(validate validate_with);
+use Params::Validate::Dependencies qw(validate validate_with);
 
 my @testset;
 

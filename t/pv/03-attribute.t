@@ -8,7 +8,7 @@ use PVTests;
 use Test::More;
 
 use Attribute::Params::Validate;
-use Params::Validate qw(:all);
+use Params::Validate::Dependencies qw(:all);
 
 sub foo : Validate( c => { type => SCALAR } ) {
     my %data = @_;
