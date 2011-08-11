@@ -4,9 +4,5 @@ WriteMakefile(
   VERSION_FROM => 'lib/Params/Validate/Dependencies.pm',
   PREREQ_PM    => {
     'Params::Validate'                => 1.00,
-    'Devel::Caller::IgnoreNamespaces' => 0,
   },
-  test => {
-    TESTS => 't/pv/*.t'
-  }
 );
