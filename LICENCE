@@ -1,0 +1,14 @@
+All the files under t/pv, all under t/lib/PVTests, and t/lib/PVTests.pm
+are taken from Params::Validate, so that I can test that
+Params::Validate::Dependencies is backward-compatible and properly
+wraps Params::Validate.
+
+They are Copyright (c) 2011 by Dave Rolsky and Ilya Martynov and are
+licenced to you under The Artistic Licence 2.0 (GPL Compatible).
+
+You may find a copy of that licence in the file ARTISTIC2.txt.
+
+Everything else is dual-licenced under either the GNU General Public
+Licence version 2 or the original Artistic Licence.  It's your choice
+which one (or both) you use.  You can find the text of those licences
+in GPL2.txt and ARTISTIC.txt.
