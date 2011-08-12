@@ -6,6 +6,8 @@ use Params::Validate qw(:all);
 
 use Test::More;
 
+END { done_testing() }
+
 my %pv = (
   alpha => { type => SCALAR, optional => 1 },
   beta  => { type => SCALAR, optional => 1 },
