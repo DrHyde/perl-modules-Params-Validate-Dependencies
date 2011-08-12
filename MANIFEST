@@ -4,3 +4,4 @@ CHANGELOG
 ARTISTIC.txt
 GPL2.txt
 lib/Params/Validate/Dependencies.pm
+t/01-basics.t
