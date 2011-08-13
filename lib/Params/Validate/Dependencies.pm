@@ -11,8 +11,9 @@ use Data::Dumper;
 local $Data::Dumper::Indent=1;
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-
 $VERSION = '1.00';
+
+# copy and update P::V's EXPORT* constants
 my @_of = qw(any_of all_of none_of one_of);
 @EXPORT = (@Params::Validate::EXPORT, @_of);
 @EXPORT_OK = (@Params::Validate::EXPORT_OK, @_of);
@@ -31,7 +32,9 @@ foreach my $sub (@_of) {
 }
 
 sub import {
+  # import all of P::V except validate()
   Params::Validate->import(grep { $_ ne 'validate' } @Params::Validate::EXPORT_OK);
+  # now export all that P::V would have exported, plus *_of
   __PACKAGE__->export_to_level(1, @_);
 }
 
@@ -74,10 +77,8 @@ Params::Validate::Dependencies extends Params::Validate's
 validate() function to
 support an arbitrary number of callbacks which are not associated
 with any one parameter.  All of those callbacks are run after
-Params::Validate's normal validate() function.  They take as their
-only argument a hashref of the parameters to check.  They should
-return true if the params are good, false otherwise.  If any of
-them return false, then validate() will die as normal.
+Params::Validate's normal validate() function.  
+If any of them return false, then validate() will die as normal.
 
 =head1 SUBROUTINES and EXPORTS
 
@@ -88,6 +89,13 @@ In that case you would load the module thus:
 
   use Params::Validate::Dependencies qw(:_of);
 
+All of the *_of functions take a list of scalars and code-refs and
+return a code-ref (which is a closure over the list originally passed
+to the function) suitable for use in validate() or in another *_of
+function.  All code-refs should take as their only argument a hashref
+of parameters to check, returning true if the parameters are good
+and false otherwise.
+
 =head2 validate
 
 Overrides and extends Params::Validate's function of the same name.
@@ -96,13 +104,17 @@ Overrides and extends Params::Validate's function of the same name.
 
 sub validate {
   my @args = @_;
+
+  # get all the coderefs
   my @coderefs = ();
   while(ref($args[-1]) && ref($args[-1]) =~ /CODE/) {
     unshift(@coderefs, pop(@args));
   }
-  my $spec = pop(@args);
   
+  # have to call P::V::validate like this cos of its prototype
+  my $spec = pop(@args);
   Params::Validate::validate(@args, $spec);
+
   foreach (@coderefs) {
     die("code-ref checking failed\n") unless($_->({@args}));
   }
@@ -143,10 +155,8 @@ sub one_of {
 
 =head2 any_of
 
-This returns a code-ref which
-checks that the hashref it receives as its only argument contains
-at least one of the specified scalar keys or which, when passed in the same
-style to a code-ref, returns true.
+Returns a code-ref which checks that the hashref it receives matches
+one or more of the options given.
 
 =cut
 
@@ -164,10 +174,8 @@ sub any_of {
 
 =head2 all_of
 
-This returns a code-ref which
-checks that the hashref it receives as its second argument contains
-all of the specified scalar keys and which, when passed in the same
-style to a code-ref, returns true.
+Returns a code-ref which checks that the hashref it receives matches
+all of the options given.
 
 =cut
 
@@ -176,6 +184,7 @@ sub all_of {
   return _count_of(\@options, $#options + 1);
 }
 
+# {none,one,all}_of are thin wrappers around this
 sub _count_of {
   my @options = @{shift()};
   my $desired_count = shift;
@@ -199,7 +208,10 @@ sub _validate_factory_args {
     if(grep { ref($_) && ref($_) !~ /CODE/ } @options);
 }
 
-=head1 BUGS
+=head1 BUGS, LIMITATIONS, and FEEDBACK
+
+I like to know who's using my code.  All comments, including constructive
+criticism, are welcome.
 
 Please report any bugs either by email or using L<http://rt.cpan.org/>
 or at L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/issues>.
@@ -207,19 +219,22 @@ or at L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/issu
 Any incompatibility with Params::Validate will be considered to be a bug,
 with the exception of minor differences in error messages.
 
+Bug reports should contain enough detail that I can replicate the
+problem and write a test.  The best bug reports have those details
+in the form of a .t file.  If you also include a patch I will love
+you for ever.
+
 =head1 SEE ALSO
 
 L<Params::Validate>
+
 L<Data::Domain>
-
-=head1 FEEDBACK
-
-I like to know who's using my code.  All comments, including constructive
-criticism, are welcome.  Please email me.
 
 =head1 SOURCE CODE REPOSITORY
 
 L<git://github.com/DrHyde/perl-modules-Params-Validate-Dependencies.git>
+
+L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/>
 
 =head1 COPYRIGHT and LICENCE
 
