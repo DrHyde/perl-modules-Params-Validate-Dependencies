@@ -4,4 +4,8 @@ CHANGELOG
 ARTISTIC.txt
 GPL2.txt
 lib/Params/Validate/Dependencies.pm
+lib/Data/Domain/Dependencies.pm
 t/01-basics.t
+t/02-data-domain.t
+t/pod-coverage.t
+t/pod.t
