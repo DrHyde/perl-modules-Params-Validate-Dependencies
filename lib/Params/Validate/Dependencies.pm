@@ -4,13 +4,11 @@ use strict;
 use warnings;
 
 use Params::Validate (); # don't import yet
+use Scalar::Util qw(blessed);
 
 use base qw(Exporter);
 
-use Data::Dumper;
-local $Data::Dumper::Indent=1;
-
-use vars qw($VERSION $DOC @EXPORT @EXPORT_OK %EXPORT_TAGS);
+use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
 $VERSION = '1.00';
 $DOC = 0;
@@ -28,6 +26,7 @@ foreach my $sub (@_of) {
   no warnings 'redefine';
   my $orig = \&{$sub};
   *{$sub} = sub {
+    local *__ANON__ = $sub;
     _validate_factory_args(@_);
     $orig->(@_);
   };
@@ -107,39 +106,10 @@ and spits out some documentation of it.  This function is not exported.
 
 sub document {
   my $sub = shift;
-  die(__PACKAGE__."::document must take a code-ref\n")
-    unless(ref($sub) =~ /CODE/);
-  local $DOC = 1;
-  $sub->({});
+  die(__PACKAGE__."::document: object $sub is wrong type\n")
+    unless(blessed($sub) && $sub->can('_document'));
+  $sub->_document();
 }
-
-# generates doco for any old function
-# takes hash: list => [list of elements], join_with => 'and' or 'or'
-# spits out: caller('list', 'of', join_with 'elements')
-sub _doc {
-  my $list      = {@_}->{list};
-  my $join_with = {@_}->{join_with};
-  my $caller    = (caller(1))[3];
-  $caller =~ s/.*:://;
-  $caller =~ s/_/ /;
-
-  my @list = (
-    (map { "'$_'" } grep { !ref($_) } @{$list}), # scalars first, quoted
-    (grep { ref($_) } @{$list})                  # then code-refs
-  );
-
-  return
-    $caller.' ('.
-      (
-        $#list > 0
-          ? join(', ', map { _doc_element($_) } @list[0 .. $#list - 1]).
-            ", $join_with "._doc_element($list[-1])
-	  : _doc_element($list[0])
-      ).
-    ')';
-}
-
-sub _doc_element { ref($_[0]) ? $_[0]->({}) : $_[0]; }
 
 =head2 validate
 
@@ -152,7 +122,7 @@ sub validate {
 
   # get all the coderefs
   my @coderefs = ();
-  while(ref($args[-1]) && ref($args[-1]) =~ /CODE/) {
+  while(blessed($args[-1]) && $args[-1]->isa('Params::Validate::Dependencies::Documenter')) {
     unshift(@coderefs, pop(@args));
   }
   
@@ -183,25 +153,25 @@ to validate that 'alpha' must *not* be accompanied by 'bar' or 'baz'.
 
 sub none_of {
   my @options = @_;
-  sub {
-    if($DOC) { local *__ANON__ = 'none_of'; return _doc(list => \@options, join_with => 'or'); }
+  bless sub {
+    if($DOC) { return $DOC->_doc_me(list => \@options); }
     return _count_of(\@options, 0)->(@_);
-  }
+  }, 'Params::Validate::Dependencies::none_of';
 }
 
 =head2 one_of
 
-Returns a code-refs which checks that the hashref it receives matches
+Returns a code-ref which checks that the hashref it receives matches
 only one of the options given.
 
 =cut
 
 sub one_of {
   my @options = @_;
-  sub {
-    if($DOC) { local *__ANON__ = 'one_of'; return _doc(list => \@options, join_with => 'or'); }
+  bless sub {
+    if($DOC) { return $DOC->_doc_me(list => \@options); }
     return _count_of(\@options, 1)->(@_);
-  }
+  }, 'Params::Validate::Dependencies::one_of';
 }
 
 =head2 any_of
@@ -213,15 +183,15 @@ one or more of the options given.
 
 sub any_of {
   my @options = @_;
-  return sub {
-    if($DOC) { local *__ANON__ = 'any_of'; return _doc(list => \@options, join_with => 'or'); }
+  bless sub {
+    if($DOC) { return $DOC->_doc_me(list => \@options); }
     my %params = %{shift()};
     foreach my $option (@options) {
       return 1 if(!ref($option) && exists($params{$option}));
       return 1 if(ref($option) && $option->(\%params));
     }
     return 0;
-  }
+  }, 'Params::Validate::Dependencies::any_of';
 }
 
 =head2 all_of
@@ -234,10 +204,10 @@ all of the options given.
 sub all_of {
   my @options = @_;
 
-  sub {
-    if($DOC) { local *__ANON__ = 'all_of'; return _doc(list => \@options, join_with => 'and'); }
+  bless sub {
+    if($DOC) { return $DOC->_doc_me(list => \@options); }
     return _count_of(\@options, $#options + 1)->(@_);
-  }
+  }, 'Params::Validate::Dependencies::all_of';
 }
 
 # {none,one,all}_of are thin wrappers around this
@@ -260,9 +230,14 @@ sub _count_of {
 sub _validate_factory_args {
   my @options = @_;
   my $sub = (caller(1))[3];
-  die("$sub takes only SCALARs and CODEREFs\n")
-    if(grep { ref($_) && ref($_) !~ /CODE/ } @options);
+  die("$sub takes only SCALARs and Params::Validate::Dependencies::* objects\n")
+    if(grep { ref($_) && !(blessed($_) && $_->isa('Params::Validate::Dependencies::Documenter')) } @options);
 }
+
+=head1 LIES
+
+Some of the above is incorrect.  If you really want to know what's
+going on, look at L<Params::Validate::Dependencies::Extending>.
 
 =head1 BUGS, LIMITATIONS, and FEEDBACK
 
@@ -303,5 +278,25 @@ This software is free-as-in-speech software, and may be used, distributed, and m
 This module is also free-as-in-mason.
 
 =cut
+
+package Params::Validate::Dependencies::all_of;
+use base qw(Params::Validate::Dependencies::Documenter);
+sub name { return 'all_of'; }
+sub join_with { return 'and'; }
+
+package Params::Validate::Dependencies::any_of;
+use base qw(Params::Validate::Dependencies::Documenter);
+sub join_with { return 'or'; }
+sub name { return 'any_of'; }
+
+package Params::Validate::Dependencies::none_of;
+use base qw(Params::Validate::Dependencies::Documenter);
+sub join_with { return 'or'; }
+sub name { return 'none_of'; }
+
+package Params::Validate::Dependencies::one_of;
+use base qw(Params::Validate::Dependencies::Documenter);
+sub join_with { return 'or'; }
+sub name { return 'one_of'; }
 
 1;

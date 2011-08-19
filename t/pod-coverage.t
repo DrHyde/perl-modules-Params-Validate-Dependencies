@@ -3,8 +3,11 @@ use strict;
 $^W=1;
 
 eval "use Test::Pod::Coverage 1.00";
+
 if($@) {
     print "1..0 # SKIP Test::Pod::Coverage 1.00 required for testing POD coverage";
 } else {
-    all_pod_coverage_ok();
+    my @modules = grep { $_ ne 'Params::Validate::Dependencies::Documenter' && $_ !~ /_of/ } all_modules();
+    Test::Builder->new()->plan(tests => scalar @modules);
+    pod_coverage_ok($_) foreach(@modules);
 }
