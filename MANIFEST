@@ -12,3 +12,4 @@ t/pod.t
 t/03-autodoco.t
 t/04-autodoco-dd.t
 lib/Params/Validate/Dependencies/Documenter.pm
+lib/Params/Validate/Dependencies/Extending.pod
