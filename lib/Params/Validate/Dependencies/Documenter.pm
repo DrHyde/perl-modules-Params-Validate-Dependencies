@@ -3,6 +3,8 @@ package Params::Validate::Dependencies::Documenter;
 use strict;
 use warnings;
 
+use Scalar::Util qw(blessed);
+
 # sets a magic flag in P::V::D that the code-refs use to tell
 # whether they should document themselves or validate, then
 # calls the code-ref
@@ -39,7 +41,9 @@ sub _doc_me {
 # calling its ->_document() method
 sub _doc_element {
   my $element = shift;
-  ref($element) ? $element->_document() : $element;
+  if(!ref($element)) { return $element }
+   elsif(blessed($element)) { return $element->_document(); }
+   else { return '[coderef does not support autodoc]' }
 }
 
 1;

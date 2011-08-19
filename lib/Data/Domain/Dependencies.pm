@@ -76,10 +76,14 @@ encouraged to not call this directly.
 # the code-ref's type for generating the doco later
 sub new {
   my($class, $sub) = @_;
-  my $name = $sub->name();
-  die("$class constructor must be passed a Params::Validate::Dependencies code-ref\n")
-    unless(blessed($sub) && $sub->isa('Params::Validate::Dependencies::Documenter'));
-  bless sub { $sub->(@_) }, "${class}::$name";
+  die("$class constructor must be passed a Params::Validate::Dependencies object or a code-ref\n")
+    unless(ref($sub) =~ /CODE/ || (blessed($sub) && $sub->isa('Params::Validate::Dependencies::Documenter')));
+  if(blessed($sub)) {
+    my $name = $sub->name();
+    return bless sub { $sub->(@_) }, "${class}::$name";
+  } else {
+    return bless sub { $sub->(@_) }, $class;
+  }
 }
 
 =head2 generate_documentation

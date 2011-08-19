@@ -122,13 +122,15 @@ sub validate {
 
   # get all the coderefs
   my @coderefs = ();
-  while(blessed($args[-1]) && $args[-1]->isa('Params::Validate::Dependencies::Documenter')) {
+  while(ref($args[-1]) =~ /CODE/ || (blessed($args[-1]) && $args[-1]->isa('Params::Validate::Dependencies::Documenter'))) {
     unshift(@coderefs, pop(@args));
   }
   
   # have to call P::V::validate like this cos of its prototype
-  my $spec = pop(@args);
-  Params::Validate::validate(@args, $spec);
+  if(ref($args[-1]) =~ /HASH/) {
+    my $spec = pop(@args);
+    Params::Validate::validate(@args, $spec);
+  }
 
   foreach (@coderefs) {
     die("code-ref checking failed\n") unless($_->({@args}));
@@ -230,8 +232,11 @@ sub _count_of {
 sub _validate_factory_args {
   my @options = @_;
   my $sub = (caller(1))[3];
-  die("$sub takes only SCALARs and Params::Validate::Dependencies::* objects\n")
-    if(grep { ref($_) && !(blessed($_) && $_->isa('Params::Validate::Dependencies::Documenter')) } @options);
+  die("$sub takes only SCALARs, code-refs, and Params::Validate::Dependencies::* objects\n")
+    if(grep {
+      ref($_) && ref($_) !~ /CODE/ && 
+      !(blessed($_) && $_->isa('Params::Validate::Dependencies::Documenter'))
+    } @options);
 }
 
 =head1 LIES
