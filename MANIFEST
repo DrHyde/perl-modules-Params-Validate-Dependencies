@@ -9,3 +9,4 @@ t/01-basics.t
 t/02-data-domain.t
 t/pod-coverage.t
 t/pod.t
+t/03-autodoco.t
