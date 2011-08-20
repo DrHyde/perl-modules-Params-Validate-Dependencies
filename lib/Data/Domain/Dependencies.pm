@@ -71,9 +71,6 @@ encouraged to not call this directly.
 
 =cut
 
-# yeah, blessing a code-ref.  Have at you, easy debugging!
-# need to bless into (eg) D::D::D::any_of so we can retrieve
-# the code-ref's type for generating the doco later
 sub new {
   my($class, $sub) = @_;
   die("$class constructor must be passed a Params::Validate::Dependencies object or a code-ref\n")
@@ -82,8 +79,13 @@ sub new {
     my $target_class = "${class}::".$sub->name();
     unless(UNIVERSAL::can($target_class, 'can')) {
       no strict 'refs';
-      @{"${target_class}::ISA"} = ('Data::Domain::Dependencies');
-      *{"${target_class}::name"} = sub { $sub->name() };
+      # multiple inheritance so we can get at Data::Domain->inspect()
+      # and Params::Validate::Dependencies::Documenter->_document()
+      @{"${target_class}::ISA"} = (
+        'Data::Domain::Dependencies',
+        blessed($sub)
+      );
+      # *{"${target_class}::name"} = sub { $sub->name() };
     }
     return bless sub { $sub->(@_) }, $target_class;
   } else {
@@ -102,9 +104,7 @@ source code.
 
 sub generate_documentation {
   my $self = shift;
-  # this crazy shit gives us a P::V::D object so we can call its
-  # documentation methods
-  (bless sub { $self->(@_) }, 'Params::Validate::Dependencies::'.$self->name())->_document();
+  $self->_document();
 }
 
 # this is where the magic happens ...
