@@ -5,6 +5,7 @@ use warnings;
 
 use Params::Validate (); # don't import yet
 use Scalar::Util qw(blessed);
+use PadWalker qw(closed_over);
 
 use base qw(Exporter);
 
@@ -150,10 +151,7 @@ to validate that 'alpha' must *not* be accompanied by 'bar' or 'baz'.
 
 sub none_of {
   my @options = @_;
-  bless sub {
-    if($DOC) { return $DOC->_doc_me(list => \@options); }
-    return _count_of(\@options, 0)->(@_);
-  }, 'Params::Validate::Dependencies::none_of';
+  _bless_right_class(_mk_autodoc(sub { _count_of(\@options, 0)->(@_) }));
 }
 
 =head2 one_of
@@ -165,10 +163,7 @@ only one of the options given.
 
 sub one_of {
   my @options = @_;
-  bless sub {
-    if($DOC) { return $DOC->_doc_me(list => \@options); }
-    return _count_of(\@options, 1)->(@_);
-  }, 'Params::Validate::Dependencies::one_of';
+  _bless_right_class(_mk_autodoc(sub { _count_of(\@options, 1)->(@_) }));
 }
 
 =head2 any_of
@@ -180,15 +175,14 @@ one or more of the options given.
 
 sub any_of {
   my @options = @_;
-  bless sub {
-    if($DOC) { return $DOC->_doc_me(list => \@options); }
+  _bless_right_class(_mk_autodoc(sub {
     my %params = %{shift()};
     foreach my $option (@options) {
       return 1 if(!ref($option) && exists($params{$option}));
       return 1 if(ref($option) && $option->(\%params));
     }
     return 0;
-  }, 'Params::Validate::Dependencies::any_of';
+  }));
 }
 
 =head2 all_of
@@ -201,10 +195,7 @@ all of the options given.
 sub all_of {
   my @options = @_;
 
-  bless sub {
-    if($DOC) { return $DOC->_doc_me(list => \@options); }
-    return _count_of(\@options, $#options + 1)->(@_);
-  }, 'Params::Validate::Dependencies::all_of';
+  _bless_right_class(_mk_autodoc(sub { _count_of(\@options, $#options + 1)->(@_) }));
 }
 
 # {none,one,all}_of are thin wrappers around this
@@ -222,6 +213,28 @@ sub _count_of {
     }
     return ($matches == $desired_count);
   }
+}
+
+sub _mk_autodoc {
+  my $sub = shift;
+  sub {
+    if($DOC) {
+      return $DOC->_doc_me(list => (closed_over($sub))[0]->{'@options'});
+    }
+    $sub->(@_);
+  }
+}
+
+sub _bless_right_class {
+  my($sub, $class) = (shift(), (caller(1))[3]);
+  (my $subname = $class) =~ s/.*:://;
+  eval qq{
+    package $class;
+    use base qw(Params::Validate::Dependencies::Documenter);
+    sub name { '$subname' }
+    sub join_with { \$_[0]->name() eq 'all_of' ? 'and' : 'or' }
+  } unless UNIVERSAL::can($class, 'name');
+  bless $sub, $class;
 }
 
 sub _validate_factory_args {
@@ -278,25 +291,5 @@ This software is free-as-in-speech software, and may be used, distributed, and m
 This module is also free-as-in-mason.
 
 =cut
-
-package Params::Validate::Dependencies::all_of;
-use base qw(Params::Validate::Dependencies::Documenter);
-sub name { return 'all_of'; }
-sub join_with { return 'and'; }
-
-package Params::Validate::Dependencies::any_of;
-use base qw(Params::Validate::Dependencies::Documenter);
-sub join_with { return 'or'; }
-sub name { return 'any_of'; }
-
-package Params::Validate::Dependencies::none_of;
-use base qw(Params::Validate::Dependencies::Documenter);
-sub join_with { return 'or'; }
-sub name { return 'none_of'; }
-
-package Params::Validate::Dependencies::one_of;
-use base qw(Params::Validate::Dependencies::Documenter);
-sub join_with { return 'or'; }
-sub name { return 'one_of'; }
 
 1;
