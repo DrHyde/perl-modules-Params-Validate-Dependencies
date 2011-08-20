@@ -79,8 +79,17 @@ sub new {
   die("$class constructor must be passed a Params::Validate::Dependencies object or a code-ref\n")
     unless(ref($sub) =~ /CODE/ || (blessed($sub) && $sub->isa('Params::Validate::Dependencies::Documenter')));
   if(blessed($sub)) {
-    my $name = $sub->name();
-    return bless sub { $sub->(@_) }, "${class}::$name";
+    my $target_class = "${class}::".$sub->name();
+    if(!UNIVERSAL::can($target_class, 'inspect')) {
+      my $name = $sub->name();
+      eval qq{
+        package $target_class;
+        use base qw(Data::Domain::Dependencies);
+        sub name {'$name'}
+      };
+      die($@) if($@);
+    }
+    return bless sub { $sub->(@_) }, $target_class;
   } else {
     return bless sub { $sub->(@_) }, $class;
   }
@@ -153,24 +162,5 @@ This software is free-as-in-speech software, and may be used, distributed, and m
 This module is also free-as-in-mason.
 
 =cut
-
-# teeny-tiny wrapper classes just so we can store the code-ref's type
-# and later re-create the right P::V::D object for documentation to
-# work
-package Data::Domain::Dependencies::any_of;
-sub name {'any_of'}
-use base qw(Data::Domain::Dependencies);
-
-package Data::Domain::Dependencies::all_of;
-sub name {'all_of'}
-use base qw(Data::Domain::Dependencies);
-
-package Data::Domain::Dependencies::one_of;
-sub name {'one_of'}
-use base qw(Data::Domain::Dependencies);
-
-package Data::Domain::Dependencies::none_of;
-sub name {'none_of'}
-use base qw(Data::Domain::Dependencies);
 
 1;

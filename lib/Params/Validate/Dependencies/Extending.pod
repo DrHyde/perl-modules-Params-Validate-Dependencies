@@ -60,7 +60,9 @@ code-ref.
 In the example above, where it says "... some extra stuff ...", we
 actually have this:
 
-  if($DOC) { return $DOC->_doc_me(list => \@options); }
+  if($Params::Validate::Dependencies::DOC) {
+    return $$Params::Validate::Dependencies::DOC->_doc_me(list => \@options);
+  }
 
 so, now that <$DOC> has a value, the code-ref doesn't bother
 validating anything, it instead calls its C<_doc_me> method,
@@ -119,6 +121,36 @@ then you can just have them return a closure and be done with it:
 
 There is an example of this in t/05-extra-validator-without-doco.t.  In
 fact it's this very example.
+
+=head1 ADDING YOUR OWN VALIDATORS WITH AUTO-DOCUMENTATION
+
+If you want to do the full-fat implementation complete with auto-doc,
+then you will need to implement one teeny-tiny class, as well as modify
+your factory function to return an object of that class and to look
+out for "documentation mode" being turned on.  The example
+above would be modifed thus:
+
+  sub two_of {
+    my @options = @_;
+    return bless sub {
+      if($Params::Validate::Dependencies::DOC) {
+        return $Params::Validate::Dependencies::DOC->_doc_me(list => \@options);
+      }
+      ...
+    }, 'Params::Validate::Dependencies::two_of'
+  }
+
+and the corresponding class would look like:
+
+  package Params::Validate::Dependencies::two_of;
+  use base qw(Params::Validate::Dependencies::Documenter);
+  sub join_with { return 'or'; }
+  sub name { return 'two_of'; }
+
+It is suggested that you combine class and function together, and
+have it export the function, as can be seen in the example
+in t/lib/Params/Validate/Dependencies/two_of.pm, which is used in
+t/06-extra-validator-with-doco.t.
 
 =head1 SEE ALSO
 
