@@ -85,7 +85,6 @@ sub new {
         'Data::Domain::Dependencies',
         blessed($sub)
       );
-      # *{"${target_class}::name"} = sub { $sub->name() };
     }
     return bless sub { $sub->(@_) }, $target_class;
   } else {
