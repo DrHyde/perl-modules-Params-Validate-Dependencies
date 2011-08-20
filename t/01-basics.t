@@ -3,19 +3,21 @@ use warnings;
 
 use Params::Validate::Dependencies qw(:all);
 
-use Test::More tests => 17;
+use Test::More tests => 20;
 
 my %pv = (
-  alpha => { type => SCALAR, optional => 1 },
-  beta  => { type => SCALAR, optional => 1 },
-  gamma => { type => SCALAR, optional => 1 },
-  bar   => { type => SCALAR, optional => 1 },
-  baz   => { type => SCALAR, optional => 1 },
+  alpha => { type => SCALAR,  optional => 1 },
+  beta  => { type => SCALAR,  optional => 1 },
+  gamma => { type => SCALAR,  optional => 1 },
+  delta => { type => HASHREF, optional => 1 },
+  bar   => { type => SCALAR,  optional => 1 },
+  baz   => { type => SCALAR,  optional => 1 },
 );
 
+ok(foo(delta => { type => SCALAR, optional => 1 }),
+  "good params, no deps, last param looks like a P::V spec");
 ok(foo() eq 'woot', "no params, no dependencies");
 dies_ok(sub { foo(alpha => []) }, "bad params, no dependencies, P::V wrapped OK");
-
 dies_ok(sub { any_of([]) }, '*_of only take scalars and code-refs');
 
 my @pvd = 
@@ -24,6 +26,14 @@ my @pvd =
     qw(alpha beta gamma),
   );
 
+ok(foo(alpha => 1, delta => { type => SCALAR, optional => 1 }),
+  "good params, deps, last param looks like a P::V spec");
+
+{
+  my %pv = ();
+  ok(foo(alpha => 1, delta => { type => SCALAR, optional => 1 }),
+    "deps only, last param looks like a P::V spec");
+}
 dies_ok(sub { foo() }, "bad params, any_of fails");
 dies_ok(sub { foo(bar => 1) }, "bad params, all_of fails");
 dies_ok(sub { foo(bar => 1, baz => []) }, 'SCALAR',

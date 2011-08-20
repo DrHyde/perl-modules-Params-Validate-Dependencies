@@ -117,20 +117,15 @@ Overrides and extends Params::Validate's function of the same name.
 
 =cut
 
-sub validate {
-  my @args = @_;
+sub validate (\@@) {
+  my @args = @{shift()};
+  my $pv_spec;
+  if(ref($_[0]) && ref($_[0]) =~ /HASH/) {
+    $pv_spec = shift;
+  }
+  my @coderefs = @_;
 
-  # get all the coderefs
-  my @coderefs = ();
-  while(ref($args[-1]) =~ /CODE/ || (blessed($args[-1]) && $args[-1]->isa('Params::Validate::Dependencies::Documenter'))) {
-    unshift(@coderefs, pop(@args));
-  }
-  
-  # have to call P::V::validate like this cos of its prototype
-  if(ref($args[-1]) =~ /HASH/) {
-    my $spec = pop(@args);
-    Params::Validate::validate(@args, $spec);
-  }
+  Params::Validate::validate(@args, $pv_spec) if($pv_spec);
 
   foreach (@coderefs) {
     die("code-ref checking failed\n") unless($_->({@args}));
