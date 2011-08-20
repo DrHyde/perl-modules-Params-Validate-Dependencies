@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Params::Validate (); # don't import yet
+use Params::Validate::Dependencies::Documenter;
 use Scalar::Util qw(blessed);
 use PadWalker qw(closed_over);
 
@@ -228,12 +229,12 @@ sub _mk_autodoc {
 sub _bless_right_class {
   my($sub, $class) = (shift(), (caller(1))[3]);
   (my $subname = $class) =~ s/.*:://;
-  eval qq{
-    package $class;
-    use base qw(Params::Validate::Dependencies::Documenter);
-    sub name { '$subname' }
-    sub join_with { \$_[0]->name() eq 'all_of' ? 'and' : 'or' }
-  } unless UNIVERSAL::can($class, 'name');
+  unless(UNIVERSAL::can($class, 'can')) {
+    no strict 'refs';
+    @{"${class}::ISA"} = ('Params::Validate::Dependencies::Documenter');
+    *{"${class}::name"} = sub { $subname };
+    *{"${class}::join_with"} = sub { $subname eq 'all_of' ? 'and' : 'or' };
+  }
   bless $sub, $class;
 }
 

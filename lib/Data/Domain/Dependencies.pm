@@ -80,14 +80,10 @@ sub new {
     unless(ref($sub) =~ /CODE/ || (blessed($sub) && $sub->isa('Params::Validate::Dependencies::Documenter')));
   if(blessed($sub)) {
     my $target_class = "${class}::".$sub->name();
-    if(!UNIVERSAL::can($target_class, 'inspect')) {
-      my $name = $sub->name();
-      eval qq{
-        package $target_class;
-        use base qw(Data::Domain::Dependencies);
-        sub name {'$name'}
-      };
-      die($@) if($@);
+    unless(UNIVERSAL::can($target_class, 'can')) {
+      no strict 'refs';
+      @{"${target_class}::ISA"} = ('Data::Domain::Dependencies');
+      *{"${target_class}::name"} = sub { $sub->name() };
     }
     return bless sub { $sub->(@_) }, $target_class;
   } else {
