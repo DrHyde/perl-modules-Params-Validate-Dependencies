@@ -9,7 +9,7 @@ use Scalar::Util qw(blessed);
 use base qw(Data::Domain);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-$VERSION = '1.00';
+$VERSION = '1.1';
 
 @EXPORT = ();
 @EXPORT_OK = (@{$Params::Validate::Dependencies::EXPORT_TAGS{_of}}, 'Dependencies');
