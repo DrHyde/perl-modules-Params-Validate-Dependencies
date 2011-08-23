@@ -3,6 +3,9 @@ package Params::Validate::Dependencies::Documenter;
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+$VERSION = '1.00';
+
 use Scalar::Util qw(blessed);
 
 # sets a magic flag in P::V::D that the code-refs use to tell
