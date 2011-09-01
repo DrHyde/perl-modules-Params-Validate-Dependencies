@@ -5,7 +5,7 @@ WriteMakefile(
   PREREQ_PM    => {
     'PadWalker'        => 1.9,
     'Scalar::Util'     => 0,
-    'Params::Validate' => 0.95,
-    'Data::Domain'     => 0.14,
+    'Params::Validate' => 0.91,
+    'Data::Domain'     => 0.13,
   },
 );
