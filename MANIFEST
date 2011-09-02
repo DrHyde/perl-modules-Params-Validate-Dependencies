@@ -16,3 +16,4 @@ lib/Params/Validate/Dependencies/Extending.pod
 t/05-extra-validator-without-doco.t
 t/06-extra-validator-with-doco.t
 t/lib/Params/Validate/Dependencies/two_of.pm
+t/coverage.sh
