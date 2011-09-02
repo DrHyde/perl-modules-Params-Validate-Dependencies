@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '1.00';
+$VERSION = '1.01';
 
 use Scalar::Util qw(blessed);
 
@@ -22,7 +22,7 @@ sub _document {
 sub _doc_me {
   my $sub = shift;
   my $list = {@_}->{list};
-  (my $name = $sub->name()) =~ s/_/ /;
+  (my $name = $sub->name()) =~ s/_/ /g;
 
   my @list = (
     (map { "'$_'" } grep { !ref($_) } @{$list}), # scalars first, quoted
