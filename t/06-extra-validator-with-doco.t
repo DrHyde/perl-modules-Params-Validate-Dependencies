@@ -29,8 +29,8 @@ is(
   'auto-doc does tree jibber-jabber'
 );
 is(
-  Params::Validate::Dependencies::document(one_of('foo', two_of('bar'))),
-  "one of ('foo' or two of ('bar'))",
+  Params::Validate::Dependencies::document(one_of('foo', two_of(qw(bar baz barf)))),
+  "one of ('foo' or two of ('bar', 'baz' or 'barf'))",
   "auto-doc does tree jibber-jabber t'other way round too"
 );
 
@@ -44,8 +44,8 @@ is(
   'DDD: auto-doc does tree jibber-jabber'
 );
 is(
-  Dependencies(one_of('foo', two_of('bar')))->generate_documentation(),
-  "one of ('foo' or two of ('bar'))",
+  Dependencies(one_of('foo', two_of(qw(bar baz barf))))->generate_documentation(),
+  "one of ('foo' or two of ('bar', 'baz' or 'barf'))",
   "DDD: auto-doc does tree jibber-jabber t'other way round too"
 );
 
