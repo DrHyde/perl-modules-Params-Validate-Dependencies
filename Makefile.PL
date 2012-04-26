@@ -1,6 +1,12 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
   NAME         => 'Params::Validate::Dependencies',
+    META_MERGE => {
+        license => 'other',
+        resource => {
+	    repository => 'https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies'
+        }
+    },
   VERSION_FROM => 'lib/Params/Validate/Dependencies.pm',
   PREREQ_PM    => {
     'PadWalker'        => 1.9,
