@@ -5,11 +5,12 @@ use warnings;
 
 use Params::Validate::Dependencies qw(:_of);
 use Scalar::Util qw(blessed);
+use Exporter qw(import);
 
 use base qw(Data::Domain);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-$VERSION = '1.1';
+$VERSION = '1.2';
 
 @EXPORT = ();
 @EXPORT_OK = (@{$Params::Validate::Dependencies::EXPORT_TAGS{_of}}, 'Dependencies');
@@ -66,8 +67,7 @@ sub Dependencies {
 =head2 new
 
 'Dependencies' above is really just a thin wrapper around this
-constructor.  You are
-encouraged to not call this directly.
+constructor.  You are encouraged to not call this directly.
 
 =cut
 
@@ -107,7 +107,7 @@ sub generate_documentation {
 }
 
 # this is where the magic happens ...
-sub _inspect {
+sub inspect {
   my $sub = shift;
   my $data = shift;
   return __PACKAGE__." can only inspect hashrefs\n"

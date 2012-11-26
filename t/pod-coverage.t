@@ -9,5 +9,8 @@ if($@) {
 } else {
     my @modules = grep { $_ ne 'Params::Validate::Dependencies::Documenter' && $_ !~ /_of/ } all_modules();
     Test::Builder->new()->plan(tests => scalar @modules);
-    pod_coverage_ok($_) foreach(@modules);
+    pod_coverage_ok(
+        $_,
+        $_ eq 'Data::Domain::Dependencies' ? { also_private => [qw(inspect)] } : ()
+    ) foreach(@modules);
 }
