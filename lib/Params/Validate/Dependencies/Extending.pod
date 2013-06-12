@@ -152,6 +152,24 @@ have it export the function, as can be seen in the example
 in t/lib/Params/Validate/Dependencies/two_of.pm, which is used in
 t/06-extra-validator-with-doco.t.
 
+=head1 RESERVED CLASSES
+
+You may not write your own validators or classes for the following, as they are implemented
+by Params::Validate::Dependencies itself. If you try implementing them, strange
+things may happen:
+
+=over
+
+=item none_of
+
+=item one_of
+
+=item any_of
+
+=item all_of
+
+=back
+
 =head1 SEE ALSO
 
 L<Params::Validate::Dependencies>
