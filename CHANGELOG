@@ -1,3 +1,6 @@
+2013-06-12      1.2     validate() now returns what it checked, like
+                          Params::Validate::validate
+
 2012-11-26      1.13    Changes in D::D::D to cope with incompatible
                           changes in new Data::Domain
 

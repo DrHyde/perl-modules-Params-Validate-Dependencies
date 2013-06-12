@@ -12,7 +12,7 @@ use base qw(Exporter);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
-$VERSION = '1.13';
+$VERSION = '1.2';
 $DOC = 0;
 
 # copy and update P::V's EXPORT* constants
@@ -127,11 +127,15 @@ sub validate (\@@) {
   }
   my @coderefs = @_;
 
-  Params::Validate::validate(@args, $pv_spec) if($pv_spec);
+  my %rval = @args;
+  # P::V::validate may alter it by applying defaults
+  %rval = Params::Validate::validate(@args, $pv_spec) if($pv_spec);
 
   foreach (@coderefs) {
     die("code-ref checking failed\n") unless($_->({@args}));
   }
+
+  return wantarray ? %rval : \%rval;
 }
 
 =head2 none_of
