@@ -12,7 +12,7 @@ use base qw(Exporter);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
-$VERSION = '1.2';
+$VERSION = '1.21';
 $DOC = 0;
 
 # copy and update P::V's EXPORT* constants
@@ -233,8 +233,8 @@ sub _mk_autodoc {
 sub _bless_right_class {
   my($sub, $class) = (shift(), (caller(1))[3]);
   (my $subname = $class) =~ s/.*:://;
-  unless(UNIVERSAL::can($class, 'can')) {
-    no strict 'refs';
+  no strict 'refs';
+  unless(@{"${class}::ISA"}) {
     @{"${class}::ISA"} = ('Params::Validate::Dependencies::Documenter');
     *{"${class}::name"} = sub { $subname };
     *{"${class}::join_with"} = sub { $subname eq 'all_of' ? 'and' : 'or' };

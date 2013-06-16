@@ -1,3 +1,8 @@
+2013-06-16      1.21    Bugfix. UNIVERSAL::can($class, 'can') always
+                          returns true in 5.18, even if the class has
+                          never been seen before. Now check for class
+                          existence by checking its @ISA
+
 2013-06-12      1.2     validate() now returns what it checked, like
                           Params::Validate::validate
 

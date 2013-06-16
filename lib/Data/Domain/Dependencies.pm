@@ -10,7 +10,7 @@ use Exporter qw(import);
 use base qw(Data::Domain);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-$VERSION = '1.2';
+$VERSION = '1.21';
 
 @EXPORT = ();
 @EXPORT_OK = (@{$Params::Validate::Dependencies::EXPORT_TAGS{_of}}, 'Dependencies');
@@ -77,8 +77,8 @@ sub new {
     unless(ref($sub) =~ /CODE/ || (blessed($sub) && $sub->isa('Params::Validate::Dependencies::Documenter')));
   if(blessed($sub)) {
     my $target_class = "${class}::".$sub->name();
-    unless(UNIVERSAL::can($target_class, 'can')) {
-      no strict 'refs';
+    no strict 'refs';
+    unless(@{"${target_class}::ISA"}) {
       # multiple inheritance so we can get at Data::Domain->inspect()
       # and Params::Validate::Dependencies::Documenter->_document()
       @{"${target_class}::ISA"} = (
