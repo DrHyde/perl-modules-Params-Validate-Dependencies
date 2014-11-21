@@ -18,3 +18,4 @@ t/06-extra-validator-with-doco.t
 t/lib/Params/Validate/Dependencies/two_of.pm
 t/coverage.sh
 t/git-issue-1-return-values.t
+MANIFEST.SKIP
