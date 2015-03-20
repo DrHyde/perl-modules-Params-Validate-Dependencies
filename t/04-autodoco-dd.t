@@ -1,9 +1,12 @@
 use strict;
 use warnings;
 
-use Data::Domain::Dependencies qw(:all);
+use Test::More (
+    $] <= 5.010 ? (skip_all => 'only on perl 5.10 and higher') : ()
+);
+END { done_testing(); }
 
-use Test::More tests => 1;
+use Data::Domain::Dependencies qw(:all);
 
 my $domain = Dependencies(
   any_of(

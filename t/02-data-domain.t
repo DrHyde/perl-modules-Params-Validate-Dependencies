@@ -1,10 +1,13 @@
 use strict;
 use warnings;
 
+use Test::More (
+    $] <= 5.010 ? (skip_all => 'only on perl 5.10 and higher') : ()
+);
+END { done_testing(); }
+
 use Data::Domain qw(:all);
 use Data::Domain::Dependencies qw(:all);
-
-use Test::More tests => 8;
 
 my $domain = Int(-min => 3, -max => 7);
 

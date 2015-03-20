@@ -26,6 +26,9 @@ A sub-class of Data::Domain which provides functions and objects
 to let Data::Domain use the same
 functions as Params::Validate::Dependencies.
 
+NB now this only works on perl 5.10 and higher as Data::Domain started
+using some features of more modern perls.
+
 =head1 SYNOPSIS
 
 This creates a domain which, when passed a hashref to inspect, will

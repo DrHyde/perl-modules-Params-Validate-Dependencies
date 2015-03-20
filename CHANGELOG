@@ -1,3 +1,7 @@
+XXXX-XX-XX      XXXX    Modern Data::Domain only works on perl 5.10,
+                          so be a bit tricksy about testing and
+                          declaring it as a pre-req
+
 2013-06-16      1.21    Bugfix. UNIVERSAL::can($class, 'can') always
                           returns true in 5.18, even if the class has
                           never been seen before. Now check for class

@@ -13,6 +13,7 @@ WriteMakefile(
     'PadWalker'        => 1.96,
     'Scalar::Util'     => 1.25,
     'Params::Validate' => 1.07,
-    'Data::Domain'     => 1.02,
+    # Modern Data::Domain only works on 5.10 and higher
+    (($] > 5.010) ? ('Data::Domain' => 1.02) : ())
   },
 );

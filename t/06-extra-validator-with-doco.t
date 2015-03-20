@@ -5,9 +5,9 @@ use lib 't/lib';
 
 use Params::Validate::Dependencies qw(:all);
 use Params::Validate::Dependencies::two_of;
-use Data::Domain::Dependencies qw(Dependencies);
 
-use Test::More tests => 15;
+use Test::More;
+END { done_testing(); }
 
 my @pvd = two_of(qw(alpha beta gamma));
 ok(foo(alpha => 1, beta => 1) eq 'woot', "correct params, no code-refs");
@@ -34,20 +34,24 @@ is(
   "auto-doc does tree jibber-jabber t'other way round too"
 );
 
+SKIP: {
+    skip "only on perl 5.10 and higher" if($] <= 5.010);
+    eval 'use Data::Domain::Dependencies qw(Dependencies)';
 my $domain = Dependencies(@pvd);
-ok(!$domain->inspect({alpha => 1, gamma => 1}), "DDD: correct params");
-ok($domain->inspect({alpha => 1, beta => 1, gamma => 1}), "DDD: incorrect params");
-
-is(
-  $domain->generate_documentation(),
-  "two of ('alpha' or one of ('beta' or 'gamma'))",
-  'DDD: auto-doc does tree jibber-jabber'
-);
-is(
-  Dependencies(one_of('foo', two_of(qw(bar baz barf))))->generate_documentation(),
-  "one of ('foo' or two of ('bar', 'baz' or 'barf'))",
-  "DDD: auto-doc does tree jibber-jabber t'other way round too"
-);
+    ok(!$domain->inspect({alpha => 1, gamma => 1}), "DDD: correct params");
+    ok($domain->inspect({alpha => 1, beta => 1, gamma => 1}), "DDD: incorrect params");
+    
+    is(
+      $domain->generate_documentation(),
+      "two of ('alpha' or one of ('beta' or 'gamma'))",
+      'DDD: auto-doc does tree jibber-jabber'
+    );
+    is(
+      Dependencies(one_of('foo', two_of(qw(bar baz barf))))->generate_documentation(),
+      "one of ('foo' or two of ('bar', 'baz' or 'barf'))",
+      "DDD: auto-doc does tree jibber-jabber t'other way round too"
+    );
+}
 
 sub dies_ok {
   my($sub, $look_for, $text) = @_;

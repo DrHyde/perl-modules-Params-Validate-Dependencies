@@ -2,9 +2,9 @@ use strict;
 use warnings;
 
 use Params::Validate::Dependencies qw(:all);
-use Data::Domain::Dependencies qw(Dependencies);
 
-use Test::More tests => 15;
+use Test::More;
+END { done_testing(); }
 
 my @pvd = two_of(qw(alpha beta gamma));
 ok(foo(alpha => 1, beta => 1) eq 'woot', "correct params, no code-refs");
@@ -28,17 +28,22 @@ is(
   'auto-doc detects un-doccable stuff deep down in the tree'
 );
 
-my $domain = Dependencies(@pvd);
-ok(!$domain->inspect({alpha => 1, gamma => 1}), "DDD: correct params");
-ok($domain->inspect({alpha => 1, beta => 1, gamma => 1}), "DDD: incorrect params");
+SKIP: {
+    skip "only on perl 5.10 and higher" if($] <= 5.010);
+    eval 'use Data::Domain::Dependencies qw(Dependencies)';
 
-dies_ok(sub { $domain->generate_documentation() },
-  "DDD: can't document the undoccable");
-is(
-  Dependencies(one_of('foo', two_of('bar')))->generate_documentation(),
-  "one of ('foo' or [coderef does not support autodoc])",
-  'DDD auto-doc also detects un-doccable stuff deep down in the tree'
-);
+    my $domain = Dependencies(@pvd);
+    ok(!$domain->inspect({alpha => 1, gamma => 1}), "DDD: correct params");
+    ok($domain->inspect({alpha => 1, beta => 1, gamma => 1}), "DDD: incorrect params");
+    
+    dies_ok(sub { $domain->generate_documentation() },
+      "DDD: can't document the undoccable");
+    is(
+      Dependencies(one_of('foo', two_of('bar')))->generate_documentation(),
+      "one of ('foo' or [coderef does not support autodoc])",
+      'DDD auto-doc also detects un-doccable stuff deep down in the tree'
+    );
+}
 
 sub two_of {
   my @options = @_;
