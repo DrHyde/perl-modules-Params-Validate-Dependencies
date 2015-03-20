@@ -10,7 +10,7 @@ use Exporter qw(import);
 use base qw(Data::Domain);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-$VERSION = '1.21';
+$VERSION = '1.22';
 
 @EXPORT = ();
 @EXPORT_OK = (@{$Params::Validate::Dependencies::EXPORT_TAGS{_of}}, 'Dependencies');

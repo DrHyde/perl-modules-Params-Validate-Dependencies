@@ -1,4 +1,4 @@
-XXXX-XX-XX      XXXX    Modern Data::Domain only works on perl 5.10,
+2015-03-20      1.22    Modern Data::Domain only works on perl 5.10,
                           so be a bit tricksy about testing and
                           declaring it as a pre-req
 
