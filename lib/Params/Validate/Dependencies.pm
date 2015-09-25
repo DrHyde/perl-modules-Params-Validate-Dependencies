@@ -3,6 +3,7 @@ package Params::Validate::Dependencies;
 use strict;
 use warnings;
 
+use Clone qw(clone);
 use Params::Validate (); # don't import yet
 use Params::Validate::Dependencies::Documenter;
 use Scalar::Util qw(blessed);
@@ -19,7 +20,7 @@ $DOC = 0;
 my @_of = qw(any_of all_of none_of one_of);
 @EXPORT = (@Params::Validate::EXPORT, @_of);
 @EXPORT_OK = (@Params::Validate::EXPORT_OK, @_of);
-%EXPORT_TAGS = (%Params::Validate::EXPORT_TAGS, _of => \@_of);
+%EXPORT_TAGS = (%{clone(\%Params::Validate::EXPORT_TAGS)}, _of => \@_of);
 push @{$EXPORT_TAGS{all}}, @_of;
 
 # because repeating the call to _validate_factory_args everywhere is BAD
