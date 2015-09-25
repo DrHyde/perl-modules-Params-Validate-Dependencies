@@ -1,3 +1,7 @@
+2015-09-25      1.23    Bugfix. Make a deep copy of P::V::EXPORT_TAGS
+                          before messing with its contents, see github
+                          issue 4
+
 2015-03-20      1.22    Modern Data::Domain only works on perl 5.10,
                           so be a bit tricksy about testing and
                           declaring it as a pre-req
