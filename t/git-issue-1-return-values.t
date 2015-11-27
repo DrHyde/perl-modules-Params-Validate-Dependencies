@@ -3,7 +3,8 @@ use warnings;
 
 use Params::Validate::Dependencies qw(:all);
 
-use Test::More tests => 4;
+use Test::More;
+END { done_testing(); }
 
 # gamma is compulsory, must have one of alpha/beta
 my %pv = (

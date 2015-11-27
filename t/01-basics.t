@@ -3,7 +3,8 @@ use warnings;
 
 use Params::Validate::Dependencies qw(:all);
 
-use Test::More tests => 20;
+use Test::More;
+END { done_testing(); }
 
 my %pv = (
   alpha => { type => SCALAR,  optional => 1 },

@@ -3,7 +3,8 @@ use warnings;
 
 use Params::Validate::Dependencies qw(:all);
 
-use Test::More tests => 6;
+use Test::More;
+END { done_testing(); }
 
 sub doc { Params::Validate::Dependencies::document(@_) }
 

@@ -44,7 +44,7 @@ sub import {
 
 =head1 NAME
 
-Params::Validate::Dependencies
+Params::Validate::Dependencies - check that the right combination of arguments is passed to a function
 
 =head1 DESCRIPTION
 

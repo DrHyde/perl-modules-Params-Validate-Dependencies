@@ -15,6 +15,7 @@ WriteMakefile(
     'Params::Validate'  => 1.07,
     'Clone',            => 0.38,
     'Test::Differences' => 0,
+    'Test::More'        => 0.88, # done_testing
     # Modern Data::Domain only works on 5.10 and higher
     (($] > 5.010) ? ('Data::Domain' => 1.02) : ())
   },

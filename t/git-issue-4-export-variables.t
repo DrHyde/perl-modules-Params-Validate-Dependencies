@@ -5,8 +5,9 @@ use Clone qw(clone);
 use Params::Validate ();
 
 use Test::More;
-use Test::Differences;
 END { done_testing(); }
+
+use Test::Differences;
 
 my %old_export_tags = %{ clone(\%Params::Validate::EXPORT_TAGS) };
 my @old_export      = @{ clone(\@Params::Validate::EXPORT     ) };
