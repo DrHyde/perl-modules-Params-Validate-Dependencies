@@ -13,18 +13,18 @@ use base qw(Exporter);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
-$VERSION = '1.23';
+$VERSION = '1.30';
 $DOC = 0;
 
 # copy and update P::V's EXPORT* constants
 my @_of = qw(any_of all_of none_of one_of);
 @EXPORT = (@Params::Validate::EXPORT, @_of);
-@EXPORT_OK = (@Params::Validate::EXPORT_OK, @_of);
+@EXPORT_OK = (@Params::Validate::EXPORT_OK, @_of, 'exclusively');
 %EXPORT_TAGS = (%{clone(\%Params::Validate::EXPORT_TAGS)}, _of => \@_of);
-push @{$EXPORT_TAGS{all}}, @_of;
+push @{$EXPORT_TAGS{all}}, (@_of, 'exclusively');
 
 # because repeating the call to _validate_factory_args everywhere is BAD
-foreach my $sub (@_of) {
+foreach my $sub (@_of, 'exclusively') {
   no strict 'refs';
   no warnings 'redefine';
   my $orig = \&{$sub};
@@ -137,6 +137,67 @@ sub validate (\@@) {
   }
 
   return wantarray ? %rval : \%rval;
+}
+
+=head2 exclusively
+
+Takes a single subref as its only argument (this would normally be the
+results of one of the *_of functions), and returns a code-ref which
+returns true if the hashref it is given only contains fields
+mentioned in the original function or any of its children. For example
+...
+
+    validate(@_,
+      exclusively(
+        any_of(
+          qw(alpha beta gamma),
+          all_of(qw(bar baz)),
+        )
+      )
+    );
+
+will not tolerate arguments such as:
+
+  bar   => ...,
+  baz   => ...,
+  sheep => ...
+
+because sheep aren't mentioned in the 'any_of' and 'all_of's. Internally
+this uses the auto-documenter interface to interrogate the child sub. This
+means that if you want to use C<exclusively()> with third-party extensions
+then they must support auto-documentation.
+
+This function is not exported by default but can be.
+
+=cut
+
+sub exclusively {
+  my @options = @_;
+  my $childsub = shift;
+  _bless_right_class(
+    sub {
+      my $documentation = document($childsub);
+      if($Params::Validate::Dependencies::DOC) {
+        return "exclusively ($documentation)";
+      }
+
+      my @strings = map {
+        s/\\'/'/g; $_
+      } $documentation =~ /
+        '
+        (
+          (?:\\'|[^'])+
+        )
+        '
+      /xg;
+
+      my %params = %{shift()};
+      foreach my $param (keys %params) {
+          return 0 if(!grep { $param eq $_ } @strings);
+      }
+      return 1;
+    }
+  );
 }
 
 =head2 none_of
@@ -288,7 +349,7 @@ L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/>
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright 2011 David Cantrell E<lt>F<david@cantrell.org.uk>E<gt>
+Copyright 2016 David Cantrell E<lt>F<david@cantrell.org.uk>E<gt>
 
 This software is free-as-in-speech software, and may be used, distributed, and modified under the terms of either the GNU General Public Licence version 2 or the Artistic Licence. It's up to you which one you use. The full text of the licences can be found in the files GPL2.txt and ARTISTIC.txt, respectively.
 

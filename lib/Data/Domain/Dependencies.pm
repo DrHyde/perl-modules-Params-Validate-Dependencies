@@ -3,17 +3,20 @@ package Data::Domain::Dependencies;
 use strict;
 use warnings;
 
-use Params::Validate::Dependencies qw(:_of);
+use Params::Validate::Dependencies qw(:_of exclusively);
 use Scalar::Util qw(blessed);
 use Exporter qw(import);
 
 use base qw(Data::Domain);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS);
-$VERSION = '1.23';
+$VERSION = '1.30';
 
 @EXPORT = ();
-@EXPORT_OK = (@{$Params::Validate::Dependencies::EXPORT_TAGS{_of}}, 'Dependencies');
+@EXPORT_OK = (
+  @{$Params::Validate::Dependencies::EXPORT_TAGS{_of}},
+  qw(exclusively Dependencies)
+);
 %EXPORT_TAGS = (all => \@EXPORT_OK);
 
 =head1 NAME
@@ -50,7 +53,7 @@ both of 'foo' and 'bar'.
 
 Nothing is exported by default, but you can export any of the *_of
 functions of Params::Validate::Dependencies, and the 'Dependencies'
-function.  They are all available under the 'all' tag.
+and 'exclusively' functions. They are all available under the 'all' tag.
 
 =head2 Dependencies
 

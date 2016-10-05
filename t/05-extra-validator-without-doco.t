@@ -4,6 +4,7 @@ use warnings;
 use Params::Validate::Dependencies qw(:all);
 
 use Test::More;
+use Test::Exception;
 END { done_testing(); }
 
 my @pvd = two_of(qw(alpha beta gamma));
@@ -58,14 +59,6 @@ sub two_of {
     }
     return ($count == 2);
   }
-}
-
-sub dies_ok {
-  my($sub, $look_for, $text) = @_;
-  ($look_for, $text) = ('^', $look_for) if(!defined($text));
-
-  eval { $sub->() };
-  ok($@ && $@ =~ /$look_for/i, $text);
 }
 
 sub foo {

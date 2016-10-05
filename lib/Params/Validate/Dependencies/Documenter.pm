@@ -25,8 +25,8 @@ sub _doc_me {
   (my $name = $sub->name()) =~ s/_/ /g;
 
   my @list = (
-    (map { "'$_'" } grep { !ref($_) } @{$list}), # scalars first, quoted
-    (grep { ref($_) } @{$list})                  # then code-refs
+    (map { (my $t = $_) =~ s/'/\\'/g; "'$t'" } grep { !ref($_) } @{$list}), # scalars first, quoted
+    (grep { ref($_) } @{$list})                                             # then code-refs
   );
   
   return

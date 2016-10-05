@@ -4,6 +4,7 @@ use warnings;
 use Params::Validate::Dependencies qw(:all);
 
 use Test::More;
+use Test::Exception;
 END { done_testing(); }
 
 my %pv = (
@@ -37,8 +38,9 @@ ok(foo(alpha => 1, delta => { type => SCALAR, optional => 1 }),
 }
 dies_ok(sub { foo() }, "bad params, any_of fails");
 dies_ok(sub { foo(bar => 1) }, "bad params, all_of fails");
-dies_ok(sub { foo(bar => 1, baz => []) }, 'SCALAR',
+dies_ok(sub { foo(bar => 1, baz => []) },
   "bad params detected even if any_of(all_of()) passes");
+like($@, qr/baz.*scalar/, "... and it died with a sensible message");
 ok(foo(bar => 1, baz => 1), "good params, any_of(all_of()) matches");
 ok(foo(alpha => 1, bar => 1), "any_of passes even if an all_of in it fails");
 
@@ -57,14 +59,6 @@ dies_ok(sub { foo(bar => 1,baz => 1, alpha => 1) }, 'bad params, one_of fails wh
 ok(foo(alpha => 1), 'good params, none_of matches');
 dies_ok(sub { foo(alpha => 1, bar => 1) }, 'bad params, none_of fails');
 dies_ok(sub { foo(alpha => 1, beta => 1) }, 'bad params, none_of fails embedded code-ref');
-
-sub dies_ok {
-  my($sub, $look_for, $text) = @_;
-  ($look_for, $text) = ('^', $look_for) if(!defined($text));
-
-  eval { $sub->() };
-  ok($@ && $@ =~ /$look_for/i, $text);
-}
 
 sub foo {
   validate(@_, \%pv, @pvd);

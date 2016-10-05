@@ -16,6 +16,7 @@ WriteMakefile(
     'Clone',            => 0.38,
     'Test::Differences' => 0,
     'Test::More'        => 0.88, # done_testing
+    'Test::Exception'   => 0,
     # Modern Data::Domain only works on 5.10 and higher
     (($] > 5.010) ? ('Data::Domain' => 1.02) : ())
   },

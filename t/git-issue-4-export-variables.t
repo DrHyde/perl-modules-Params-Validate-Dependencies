@@ -36,8 +36,9 @@ eq_or_diff(
     [
         @{$Params::Validate::EXPORT_TAGS{all}}, 
         @{$Params::Validate::Dependencies::EXPORT_TAGS{_of}},
+        'exclusively'
     ],
-    '$Params::Validate::Dependencies::EXPORT_TAGS{all} contains *_of'
+    '$Params::Validate::Dependencies::EXPORT_TAGS{all} contains *_of and \'exclusively\''
 );
 eq_or_diff(
     \@Params::Validate::Dependencies::EXPORT,
@@ -52,7 +53,8 @@ eq_or_diff(
     [
         @Params::Validate::EXPORT_OK,
         @{$Params::Validate::Dependencies::EXPORT_TAGS{_of}},
+        'exclusively'
     ],
-    '@Params::Validate::Dependencies::EXPORT_OK contains *_of'
+    '@Params::Validate::Dependencies::EXPORT_OK contains *_of and \'exclusively\''
 );
 

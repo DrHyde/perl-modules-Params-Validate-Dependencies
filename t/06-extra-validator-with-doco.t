@@ -7,6 +7,7 @@ use Params::Validate::Dependencies qw(:all);
 use Params::Validate::Dependencies::two_of;
 
 use Test::More;
+use Test::Exception;
 END { done_testing(); }
 
 my @pvd = two_of(qw(alpha beta gamma));
@@ -51,14 +52,6 @@ my $domain = Dependencies(@pvd);
       "one of ('foo' or two of ('bar', 'baz' or 'barf'))",
       "DDD: auto-doc does tree jibber-jabber t'other way round too"
     );
-}
-
-sub dies_ok {
-  my($sub, $look_for, $text) = @_;
-  ($look_for, $text) = ('^', $look_for) if(!defined($text));
-
-  eval { $sub->() };
-  ok($@ && $@ =~ /$look_for/i, $text);
 }
 
 sub foo {

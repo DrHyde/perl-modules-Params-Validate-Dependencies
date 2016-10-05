@@ -1,3 +1,9 @@
+2016-10-05      1.30    Add 'exclusively' validator;
+                        Fix quoting of strings with embedded quotes in
+                          auto-generated doco;
+                        Minor doco fixes;
+                        Minor test improvements
+
 2015-09-25      1.23    Bugfix. Make a deep copy of P::V::EXPORT_TAGS
                           before messing with its contents, see github
                           issue 4

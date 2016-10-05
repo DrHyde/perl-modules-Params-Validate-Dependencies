@@ -61,7 +61,7 @@ In the example above, where it says "... some extra stuff ...", we
 actually have this:
 
   if($Params::Validate::Dependencies::DOC) {
-    return $$Params::Validate::Dependencies::DOC->_doc_me(list => \@options);
+    return $Params::Validate::Dependencies::DOC->_doc_me(list => \@options);
   }
 
 so, now that <$DOC> has a value, the code-ref doesn't bother
@@ -81,7 +81,7 @@ It then iterates over the original list of options, scalars first
 followed by code-reffy objects, recursing into objects and getting
 them to document themselves.
 
-The end result if that, given a code-ref created thus:
+The end result of that, given a code-ref created thus:
 
   any_of(
     qw(alpha beta),
@@ -152,6 +152,20 @@ have it export the function, as can be seen in the example
 in t/lib/Params/Validate/Dependencies/two_of.pm, which is used in
 t/06-extra-validator-with-doco.t.
 
+=head1 CUSTOM AUTO-DOCUMENTATION
+
+If the C<_doc_me> method described above can't cope with your new validation
+function then your class need not bother implementing the C<name> or C<join_with>
+methods, but your function must, when <$Params::Validate::Dependencies::DOC> is
+set, return a string. Anything that you want the C<exclusively()> validator to
+pay attention to needs to be single quoted, with any embedded single quotes
+preceded by a back-slash.
+
+Best practice is to return something that looks very similar to how your
+function was invoked in the first place.
+
+For an example see how the C<exclusively()> function documents itself.
+
 =head1 RESERVED CLASSES
 
 You may not write your own validators or classes for the following, as they are implemented
@@ -167,6 +181,8 @@ things may happen:
 =item any_of
 
 =item all_of
+
+=item exclusively
 
 =back
 
@@ -184,7 +200,7 @@ L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/>
 
 =head1 COPYRIGHT and LICENCE
 
-Copyright 2011 David Cantrell E<lt>F<david@cantrell.org.uk>E<gt>
+Copyright 2016 David Cantrell E<lt>F<david@cantrell.org.uk>E<gt>
 
 This documentation is free-as-in-speech software.  It may be used, distributed, and modified under the terms of the Creative Commons Attribution-Share Alike 2.0 UK: England & Wales License, whose text you may read at L<http://creativecommons.org/licenses/by-sa/2.0/uk/>.
 

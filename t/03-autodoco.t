@@ -36,6 +36,12 @@ is(
 );
 
 is(
+  doc(none_of("'single quotes'")),
+  "none of ('\\'single quotes\\'')",
+  "whitespace and 'single quotes' are properly quoted"
+);
+
+is(
   doc(
     any_of(
       qw(alpha beta),

@@ -20,3 +20,4 @@ t/coverage.sh
 t/git-issue-1-return-values.t
 MANIFEST.SKIP
 t/git-issue-4-export-variables.t
+t/git-issue-5-exclusively.t
