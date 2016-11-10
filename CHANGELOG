@@ -1,3 +1,6 @@
+2016-11-10      1.31    Work around Data::Domain's dependencies being
+                          broken on perl 5.24 - just skip the tests
+
 2016-10-05      1.30    Add 'exclusively' validator;
                         Fix quoting of strings with embedded quotes in
                           auto-generated doco;
