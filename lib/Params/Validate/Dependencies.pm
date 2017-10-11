@@ -324,8 +324,8 @@ going on, look at L<Params::Validate::Dependencies::Extending>.
 I like to know who's using my code.  All comments, including constructive
 criticism, are welcome.
 
-Please report any bugs either by email or using L<http://rt.cpan.org/>
-or at L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/issues>.
+Please report any bugs either by email or
+at L<https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/issues>.
 
 Any incompatibility with Params::Validate will be considered to be a bug,
 with the exception of minor differences in error messages.
