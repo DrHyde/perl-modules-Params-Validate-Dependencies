@@ -37,7 +37,7 @@ foreach my $sub (@_of, 'exclusively') {
 
 sub import {
   # import all of P::V except validate()
-  Params::Validate->import(grep { $_ ne 'validate' } @Params::Validate::EXPORT_OK);
+  Params::Validate->import(grep { ! /^validate(_with)?$/ } @Params::Validate::EXPORT_OK);
   # now export all that P::V would have exported, plus *_of
   __PACKAGE__->export_to_level(1, @_);
 }
@@ -134,6 +134,30 @@ sub validate (\@@) {
 
   foreach (@coderefs) {
     die("code-ref checking failed\n") unless($_->({@args}));
+  }
+
+  return wantarray ? %rval : \%rval;
+}
+
+=head2 validate_with
+
+Overrides and extends Params::Validate's function of the same name.
+
+=cut
+
+sub validate_with {
+  my %args = @_;
+  my $params = [ @{$args{params}} ];
+
+  $args{dependencies} = [] unless defined $args{dependencies};
+
+  my %rval = Params::Validate::validate_with(@_);
+
+  my $coderefs = delete $args{dependencies};
+  $coderefs = ref($coderefs) eq 'ARRAY' ? $coderefs : [ $coderefs ];
+
+  foreach (@{$coderefs}) {
+    die("code-ref checking failed\n") unless($_->({@{$params}}));
   }
 
   return wantarray ? %rval : \%rval;
