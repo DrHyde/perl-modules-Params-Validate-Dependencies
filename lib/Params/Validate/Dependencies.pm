@@ -121,7 +121,14 @@ Overrides and extends Params::Validate's function of the same name.
 =cut
 
 sub validate (\@@) {
-  my @args = @{shift()};
+  my @args;
+
+  my $p = shift;
+  if ( ref $p eq 'ARRAY' ) {
+    # First argument might have been a hash reference
+    @args = @{ ref $p->[0] ? [ %{ $p->[0] } ] : $p  };
+  }
+
   my $pv_spec;
   if(ref($_[0]) && ref($_[0]) =~ /HASH/) {
     $pv_spec = shift;
