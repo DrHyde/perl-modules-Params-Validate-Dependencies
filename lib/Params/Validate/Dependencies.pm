@@ -133,7 +133,8 @@ sub validate (\@@) {
   %rval = Params::Validate::validate(@args, $pv_spec) if($pv_spec);
 
   foreach (@coderefs) {
-    die("code-ref checking failed\n") unless($_->({@args}));
+    die 'code-ref checking failed: arguments were not ' . document($_) . "\n"
+        unless $_->({@args});
   }
 
   return wantarray ? %rval : \%rval;
