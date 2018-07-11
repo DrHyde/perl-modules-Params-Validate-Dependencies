@@ -13,7 +13,7 @@ use base qw(Exporter);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
-$VERSION = '1.32';
+$VERSION = '1.40';
 $DOC = 0;
 
 # copy and update P::V's EXPORT* constants
@@ -36,7 +36,7 @@ foreach my $sub (@_of, 'exclusively') {
 }
 
 sub import {
-  # import all of P::V except validate()
+  # import all of P::V except validate() and dvalidate_with()
   Params::Validate->import(grep { ! /^validate(_with)?$/ } @Params::Validate::EXPORT_OK);
   # now export all that P::V would have exported, plus *_of
   __PACKAGE__->export_to_level(1, @_);
@@ -167,7 +167,7 @@ sub validate_with {
   my %rval = Params::Validate::validate_with(@_);
 
   foreach (@{$coderefs}) {
-    die("code-ref checking failed\n") unless($_->({@{$params}}));
+    die('code-ref checking failed: arguments were not '.document($_)."\n") unless($_->({@{$params}}));
   }
 
   return wantarray ? %rval : \%rval;
