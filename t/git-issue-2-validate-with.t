@@ -7,8 +7,6 @@ use Test::More;
 use Test::Exception;
 END { done_testing(); }
 
-sub doc { Params::Validate::Dependencies::document(@_) }
-
 my $spec = { foo => 1, bar => 1, optional => 0 };
 
 # Vanilla call

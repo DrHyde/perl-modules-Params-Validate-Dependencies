@@ -143,6 +143,9 @@ sub validate (\@@) {
 
 Overrides and extends Params::Validate's function of the same name.
 
+The code-ref, or an array-ref of code-refs, are passed as the
+extra 'dependencies' argument.
+
 =cut
 
 sub validate_with {
@@ -150,11 +153,10 @@ sub validate_with {
   my $params = [ @{$args{params}} ];
 
   $args{dependencies} = [] unless defined $args{dependencies};
-
-  my %rval = Params::Validate::validate_with(@_);
-
   my $coderefs = delete $args{dependencies};
   $coderefs = ref($coderefs) eq 'ARRAY' ? $coderefs : [ $coderefs ];
+
+  my %rval = Params::Validate::validate_with(@_);
 
   foreach (@{$coderefs}) {
     die("code-ref checking failed\n") unless($_->({@{$params}}));
