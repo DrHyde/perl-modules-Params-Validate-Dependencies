@@ -1,4 +1,4 @@
-2018-XX-XX      1.40    Add support for validate_with
+2018-07-12      1.40    Add support for validate_with
                           (see https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/pull/8)
                         Accept a hashref as first arg to validate
                           (see https://github.com/DrHyde/perl-modules-Params-Validate-Dependencies/pull/9)
