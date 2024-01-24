@@ -13,7 +13,7 @@ use base qw(Exporter);
 
 use vars qw($VERSION @EXPORT @EXPORT_OK %EXPORT_TAGS $DOC);
 
-$VERSION = '1.41';
+$VERSION = '2.00';
 $DOC = 0;
 
 # copy and update P::V's EXPORT* constants

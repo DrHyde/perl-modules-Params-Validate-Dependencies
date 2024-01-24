@@ -15,8 +15,8 @@ understand objects in perl.
 
 =head1 WHAT THE *_of FUNCTIONS REALLY DO
 
-If you've read the documentation for Params::Validate::Dependencies
-and Data::Domain::Dependencies, then you'd think that they return
+If you've read the documentation for Params::Validate::Dependencies,
+then you'd think that it returns
 a code-ref which is a closure over the original arguments, and that
 they're implemented something like this:
 
@@ -189,8 +189,6 @@ things may happen:
 =head1 SEE ALSO
 
 L<Params::Validate::Dependencies>
-
-L<Data::Domain::Dependencies>
 
 =head1 SOURCE CODE REPOSITORY
 
